@@ -110,8 +110,87 @@ def ThinLens_f_M(win, wout, f, Lambda):
         for key in Mirror_para2.keys():
              print(key,':',Mirror_para2[key])
         return Mirror_para1, Mirror_para2
+
+def ThinLens_d_M(win, wout, d, Lambda):
+        M=wout/win
+        z_c_in = np.pi*win**2/Lambda
+        z_c_out= np.pi*wout**2/Lambda
+        f0=np.pi*win*wout/Lambda
+        Mirror_para1={'Lambda':Lambda,
+                        'f':None,
+                        'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
+                        'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
+                        'M':M}
+        Mirror_para2={'Lambda':Lambda,
+                        'f':None,
+                        'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
+                        'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
+                        'M':M}
+        if M!=1.0:
+            f=(np.sqrt((M-1/M)**2*f0**2+d**2)*(M+1/M)-2*d)/(M-1/M)**2
+            din=(d-f*(1-M**2))/(1+M**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
+            dout=(M**2*d+f*(1-M**2))/(1+M**2);Rout=1/(1/f-1/Rin)
+            q1=din+1j*z_c_in
+            q2=dout+1j*z_c_out
+            phi1=np.arctan(din/z_c_in)
+            phi2=np.arctan(dout/z_c_out)
+            Mirror_para1['f']=f
+            Mirror_para1['din']=din
+            Mirror_para1['Rin']=Rin
+            Mirror_para1['dout']=dout
+            Mirror_para1['Rout']=Rout
+            Mirror_para1['q1']=q1
+            Mirror_para1['q2']=q2
+            Mirror_para1['phi1']=phi1
+            Mirror_para1['phi2']=phi2
+
+            f=(-np.sqrt((M-1/M)**2*f0**2+d**2)*(M+1/M)-2*d)/(M-1/M)**2
+            din=(d-f*(1-M**2))/(1+M**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
+            dout=(M**2*d+f*(1-M**2))/(1+M**2);Rout=1/(1/f-1/Rin)
+            q1=din+1j*z_c_in
+            q2=dout+1j*z_c_out
+            phi1=np.arctan(din/z_c_in)
+            phi2=np.arctan(dout/z_c_out)
+            Mirror_para2['f']=f
+            Mirror_para2['din']=din
+            Mirror_para2['Rin']=Rin
+            Mirror_para2['dout']=dout
+            Mirror_para2['Rout']=Rout
+            Mirror_para2['q1']=q1
+            Mirror_para2['q2']=q2
+            Mirror_para2['phi1']=phi1
+            Mirror_para2['phi2']=phi2
+
+        elif M==1.0:
+            f=d/4+f0**2/d
+            din=(d-f*(1-M**2))/(1+M**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
+            dout=(M**2*d+f*(1-M**2))/(1+M**2);Rout=1/(1/f-1/Rin)
+            q1=din+1j*z_c_in
+            q2=dout+1j*z_c_out
+            phi1=np.arctan(din/z_c_in)
+            phi2=np.arctan(dout/z_c_out)
+            Mirror_para1['f']=f
+            Mirror_para1['din']=din
+            Mirror_para1['Rin']=Rin
+            Mirror_para1['dout']=dout
+            Mirror_para1['Rout']=Rout
+            Mirror_para1['q1']=q1
+            Mirror_para1['q2']=q2
+            Mirror_para1['phi1']=phi1
+            Mirror_para1['phi2']=phi2
+        for key in Mirror_para1.keys():
+             print(key,':',Mirror_para1[key])
+        for key in Mirror_para2.keys():
+             print(key,':',Mirror_para2[key])
+        return Mirror_para1, Mirror_para2
 # %%
 p=ThinLens(1.4, 33.73731665, 67.80690232, 1.0162456203)
 # %%
-p1,p2=ThinLens_f_M(1.4, 2.7433005371299104, 67.80690232, 1.0162456203)
+p1,p2=ThinLens_f_M(1.4, 1.4, 67.80690232, 1.0162456203)
+# %%
+p=ThinLens(1.4, 135.34254813273228, 67.80690232, 1.0162456203)
+# %%
+p=ThinLens(1.4, 0.2712565072677364, 67.80690232, 1.0162456203)
+# %%
+p1,p2=ThinLens_d_M(1.4, 1.4, 0.2712565072677364+0.2712565072677176, 1.0162456203)
 # %%
