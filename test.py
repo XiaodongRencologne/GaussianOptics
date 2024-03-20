@@ -26,36 +26,92 @@ def Gaussian_propagation2d(w0,z,Lambda):
 
     return z_c, w_z, R_z, q, phi, Gbeam
 
-def ThinLens(win, din, Lambda, para='f', value1=10):
-    # para:  'f' or 'dout'
+def ThinLens(win, din, f, Lambda):
+    # para:  'f' or 'din'
+    # para:  
     z_c, w_z, Rin, q1, phi1, b1 =Gaussian_propagation2d(win,din,Lambda)
-    if para=='f':
-        f=value1      
-        M_max=f/z_c
-        factor=(din/f-1)**2+(z_c/f)**2
-        dout=f*(1+(din/f-1)/factor)
-        wout=win/np.sqrt(factor)
-        Rout=1/(1/Rin-1/f)
+    Mirror_para={'Lambda':Lambda,
+                 'f':f,
+                 'win':win,'din':din,'Rin':Rin,'q1':q1, 'phi1': phi1,
+                 'wout':None,'dout':None,'Rout':0,'q2': 0, 'phi2': None,
+                 'M':0}
+  
+    M_max=f/z_c
+    factor=(din/f-1)**2+(z_c/f)**2
+    dout=f*(1+(din/f-1)/factor)
+    wout=win/np.sqrt(factor)
+    Rout=1/(1/f-1/Rin)
+    M=wout/win
+    z_out_c=np.pi*wout**2/Lambda
+    q2=dout+1j*z_out_c
+
+    Mirror_para['wout']=wout
+    Mirror_para['dout']=dout
+    Mirror_para['Rout']=Rout
+    Mirror_para['q2']=q2
+    Mirror_para['phi2']=np.arctan(dout/z_out_c)
+    Mirror_para['M']=M
+    for key in Mirror_para.keys():
+        print(key,':',Mirror_para[key])
+    return Mirror_para
+
+
+
+def ThinLens_f_M(win, wout, f, Lambda):
         M=wout/win
-        print(M)
-        print(M_max)
-        print(1/np.sqrt(factor))
-        print(dout)
-        print(Rout)
+        z_c_in = np.pi*win**2/Lambda
+        z_c_out= np.pi*wout**2/Lambda
+        Mirror_para1={'Lambda':Lambda,
+                        'f':f,
+                        'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
+                        'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
+                        'M':M}
+        Mirror_para2={'Lambda':Lambda,
+                        'f':f,
+                        'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
+                        'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
+                        'M':M}
+        f0=np.pi*win*wout/Lambda
+        # pos
+        din=f+1/M*np.sqrt(f**2-f0**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
+        dout=f+M*np.sqrt(f**2-f0**2);Rout=1/(1/f-1/Rin)
+        q1=din+1j*z_c_in
+        q2=dout+1j*z_c_out
+        phi1=np.arctan(din/z_c_in)
+        phi2=np.arctan(dout/z_c_out)
+        Mirror_para1['din']=din
+        Mirror_para1['Rin']=Rin
+        Mirror_para1['dout']=dout
+        Mirror_para1['Rout']=Rout
+        Mirror_para1['q1']=q1
+        Mirror_para1['q2']=q2
+        Mirror_para1['phi1']=phi1
+        Mirror_para1['phi2']=phi2
 
-    elif para=='dout':
-        dout=value1
-        d=din+dout
-        factor2=np.sqrt(1-(2*dout*Lambda/np.pi/w_z**2)**2)
-        wout_pos=w_z/np.sqrt(2)*(1+factor2)
-        wout_neg=w_z/np.sqrt(2)*(1-factor2)
-        print(wout_pos,wout_neg)
-        
-        pass
-
-
-
-
+        # neg
+        din=f-1/M*np.sqrt(f**2-f0**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
+        dout=f-M*np.sqrt(f**2-f0**2);Rout=1/(1/f-1/Rin)
+        q1=din+1j*z_c_in
+        q2=dout+1j*z_c_out
+        phi1=np.arctan(din/z_c_in)
+        phi2=np.arctan(dout/z_c_out)
+        Mirror_para2['din']=din
+        Mirror_para2['Rin']=Rin
+        Mirror_para2['dout']=dout
+        Mirror_para2['Rout']=Rout
+        Mirror_para2['q1']=q1
+        Mirror_para2['q2']=q2
+        Mirror_para2['phi1']=phi1
+        Mirror_para2['phi2']=phi2
+        Mirror_para2['din']=din
+        Mirror_para2['dout']=dout
+        for key in Mirror_para1.keys():
+             print(key,':',Mirror_para1[key])
+        for key in Mirror_para2.keys():
+             print(key,':',Mirror_para2[key])
+        return Mirror_para1, Mirror_para2
 # %%
-ThinLens(1.4, 0, 1.0162456203, para='f', value=33.73731665)
+p=ThinLens(1.4, 33.73731665, 67.80690232, 1.0162456203)
+# %%
+p1,p2=ThinLens_f_M(1.4, 2.7433005371299104, 67.80690232, 1.0162456203)
 # %%
