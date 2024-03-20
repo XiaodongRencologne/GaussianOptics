@@ -26,11 +26,11 @@ def Gaussian_propagation2d(w0,z,Lambda):
 
     return z_c, w_z, R_z, q, phi, Gbeam
 
-def ThinLens(win, din, Lambda, para='f', value=10):
+def ThinLens(win, din, Lambda, para='f', value1=10):
     # para:  'f' or 'dout'
     z_c, w_z, Rin, q1, phi1, b1 =Gaussian_propagation2d(win,din,Lambda)
     if para=='f':
-        f=value       
+        f=value1      
         M_max=f/z_c
         factor=(din/f-1)**2+(z_c/f)**2
         dout=f*(1+(din/f-1)/factor)
@@ -44,8 +44,13 @@ def ThinLens(win, din, Lambda, para='f', value=10):
         print(Rout)
 
     elif para=='dout':
-        dout=value
+        dout=value1
         d=din+dout
+        factor2=np.sqrt(1-(2*dout*Lambda/np.pi/w_z**2)**2)
+        wout_pos=w_z/np.sqrt(2)*(1+factor2)
+        wout_neg=w_z/np.sqrt(2)*(1-factor2)
+        print(wout_pos,wout_neg)
+        
         pass
 
 
