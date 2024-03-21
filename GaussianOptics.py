@@ -1,5 +1,6 @@
 # %%
 import numpy as np
+import matplotlib.pyplot as plt
 
 def Gaussian_propagation2d(w0,z,Lambda):
     # confocal distance, in grasp it is denoted by 'b'
@@ -51,8 +52,8 @@ def ThinLens(win, din, f, Lambda):
     Mirror_para['q2']=q2
     Mirror_para['phi2']=np.arctan(dout/z_out_c)
     Mirror_para['M']=M
-    for key in Mirror_para.keys():
-        print(key,':',Mirror_para[key])
+    #for key in Mirror_para.keys():
+    #    print(key,':',Mirror_para[key])
     return Mirror_para
 
 
@@ -183,14 +184,3 @@ def ThinLens_d_M(win, wout, d, Lambda):
         for key in Mirror_para2.keys():
              print(key,':',Mirror_para2[key])
         return Mirror_para1, Mirror_para2
-# %%
-p=ThinLens(1.4, 33.73731665, 67.80690232, 1.0162456203)
-# %%
-p1,p2=ThinLens_f_M(1.4, 1.4, 67.80690232, 1.0162456203)
-# %%
-p=ThinLens(1.4, 135.34254813273228, 67.80690232, 1.0162456203)
-# %%
-p=ThinLens(1.4, 0.2712565072677364, 67.80690232, 1.0162456203)
-# %%
-p1,p2=ThinLens_d_M(1.4, 1.4, 0.2712565072677364+0.2712565072677176, 1.0162456203)
-# %%
