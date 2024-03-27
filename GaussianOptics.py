@@ -32,10 +32,14 @@ def ThinLens(win, din, f, Lambda):
     # para:  
     z_c, w_z, Rin, q1, phi1, b1 =Gaussian_propagation2d(win,din,Lambda)
     Mirror_para={'Lambda':Lambda,
+                 'z_c_in': z_c,
+                 'z_c_out':None,
                  'f':f,
                  'win':win,'din':din,'Rin':Rin,'q1':q1, 'phi1': phi1,
                  'wout':None,'dout':None,'Rout':0,'q2': 0, 'phi2': None,
-                 'M':0}
+                 'M':0,
+                 'M_max':f/z_c,
+                 'w_mirror':win*np.sqrt(1+(din/z_c)**2)}
   
     M_max=f/z_c
     factor=(din/f-1)**2+(z_c/f)**2
@@ -52,6 +56,7 @@ def ThinLens(win, din, f, Lambda):
     Mirror_para['q2']=q2
     Mirror_para['phi2']=np.arctan(dout/z_out_c)
     Mirror_para['M']=M
+    Mirror_para['z_c_out']=np.pi*wout**2/Lambda
     #for key in Mirror_para.keys():
     #    print(key,':',Mirror_para[key])
     return Mirror_para
@@ -63,11 +68,15 @@ def ThinLens_f_M(win, wout, f, Lambda):
         z_c_in = np.pi*win**2/Lambda
         z_c_out= np.pi*wout**2/Lambda
         Mirror_para1={'Lambda':Lambda,
+                        'z_c_in': z_c_in,
+                        'z_c_out':None,
                         'f':f,
                         'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
                         'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
                         'M':M}
         Mirror_para2={'Lambda':Lambda,
+                        'z_c_in': z_c_in,
+                        'z_c_out':None,
                         'f':f,
                         'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
                         'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
@@ -88,6 +97,7 @@ def ThinLens_f_M(win, wout, f, Lambda):
         Mirror_para1['q2']=q2
         Mirror_para1['phi1']=phi1
         Mirror_para1['phi2']=phi2
+        Mirror_para1['z_c_out']=np.pi*wout**2/Lambda
 
         # neg
         din=f-1/M*np.sqrt(f**2-f0**2);Rin=din*(1+(np.pi*win**2/Lambda/din)**2)
@@ -106,6 +116,7 @@ def ThinLens_f_M(win, wout, f, Lambda):
         Mirror_para2['phi2']=phi2
         Mirror_para2['din']=din
         Mirror_para2['dout']=dout
+        Mirror_para2['z_c_out']=np.pi*wout**2/Lambda
         for key in Mirror_para1.keys():
              print(key,':',Mirror_para1[key])
         for key in Mirror_para2.keys():
@@ -119,11 +130,15 @@ def ThinLens_d_M(win, wout, d, Lambda):
         f0=np.pi*win*wout/Lambda
         Mirror_para1={'Lambda':Lambda,
                         'f':None,
+                        'z_c_in': z_c_in,
+                        'z_c_out':z_c_out,
                         'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
                         'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
                         'M':M}
         Mirror_para2={'Lambda':Lambda,
                         'f':None,
+                        'z_c_in': z_c_in,
+                        'z_c_out':z_c_out,
                         'win':win,'din':None,'Rin':None,'q1':None, 'phi1':None,
                         'wout':wout,'dout':None,'Rout':None,'q2': None, 'phi2': None,
                         'M':M}
@@ -184,3 +199,23 @@ def ThinLens_d_M(win, wout, d, Lambda):
         for key in Mirror_para2.keys():
              print(key,':',Mirror_para2[key])
         return Mirror_para1, Mirror_para2
+
+def DrawBeamCountour(M_list,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwargs):
+    """
+    **kwargs includes:
+    """
+    z_c1 = Mirror['z_c_in']
+    z_c2 = Mirror['z_c_out']
+    win  = Mirror['win']
+    wout = Mirror['wout']
+    din  = Mirror['din']
+    dout = Mirror['dout']
+    zin =  np.linspace(0, np.abs(din),Nin)
+    zout = np.linspace(0,np.abs(dout),Nout)+zin[-1]
+    z = np.append(zin,zout)+offset
+    Countour = np.zeros((2,Nin+Nout))
+    Countour_in = win*np.sqrt(1+(zin/z_c1)**2)
+    Countour_out = wout*np.sqrt(1+((zout-din-np.abs(dout))/z_c2)**2)
+
+    return z, Countour_in, Countour_out
+    
