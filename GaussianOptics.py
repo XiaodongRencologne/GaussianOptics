@@ -9,7 +9,7 @@ def Gaussian_propagation2d(w0,z,Lambda):
     w_z=w0*np.sqrt(1+(z/z_c)**2)
     # radius of wavefront curvature at z
     if z==0:
-        R_z=999999999999999999999999999999
+        R_z=10.0**100
     else:
         R_z=z+z_c**2/z
     # beam parameter
@@ -45,7 +45,10 @@ def ThinLens(win, din, f, Lambda):
     factor=(din/f-1)**2+(z_c/f)**2
     dout=f*(1+(din/f-1)/factor)
     wout=win/np.sqrt(factor)
-    Rout=1/(1/f-1/Rin)
+    if f==Rin:
+         Rout=10.0**100
+    else:
+         Rout=1/(1/f-1/Rin)
     M=wout/win
     z_out_c=np.pi*wout**2/Lambda
     q2=dout+1j*z_out_c
