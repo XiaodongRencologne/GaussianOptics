@@ -1,6 +1,6 @@
 # %%
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def Gaussian_propagation2d(w0,z,Lambda):
     # confocal distance, in grasp it is denoted by 'b'
@@ -200,7 +200,7 @@ def ThinLens_d_M(win, wout, d, Lambda):
              print(key,':',Mirror_para2[key])
         return Mirror_para1, Mirror_para2
 
-def DrawBeamCountour(M_list,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwargs):
+def DrawBeamCountour(Mirror,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwargs):
     """
     **kwargs includes:
     """
