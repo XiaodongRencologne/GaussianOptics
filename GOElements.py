@@ -10,7 +10,7 @@ import pyvista as pv
 pv.set_jupyter_backend('trame')#('static')#
 
 # %%
-def Ellipsoid(GO_para,Angle, Scale=5):
+def Mirror(GO_para,Angle,Scale=5):
     Angle=Angle/180*np.pi
     Rin=GO_para['Rin']
     Rout=GO_para['Rout']
@@ -21,16 +21,29 @@ def Ellipsoid(GO_para,Angle, Scale=5):
     b=np.sqrt(np.abs(a**2-c**2))
     p=b**2/a
     
-    phi0=np.arccos(((2*c)**2+Rin**2-Rout**2)/(2*Rin*2*c))
-    size=GO_para['Lambda']/np.pi/GO_para['win']*3
-    phi_max=phi0+size
-    phi_min=phi0-size
+    if Rout*Rin<0:
+        GO_para['Mtype']='Hyperb'
+        phi0=np.arccos(((2*c)**2+Rin**2-Rout**2)/(2*Rin*2*c))
+        print(phi0*180/np.pi)
+        size=GO_para['Lambda']/np.pi/GO_para['win']*3
+        phi_max=phi0+size
+        phi_min=phi0-size
+        P_max=np.pi-np.arctan(b/a)-1/180*np.pi
+        if np.abs(phi_max)>=P_max:
+            phi_max=P_max
+        elif np.abs(phi_min)>=P_max:
+            phi_min=-P_max
+    else:
+        GO_para['Mtype']='Ellip'
+        phi0=np.pi-np.arccos(((2*c)**2+Rin**2-Rout**2)/(2*Rin*2*c))
+        size=GO_para['Lambda']/np.pi/GO_para['win']*3
+        phi_max=phi0+size
+        phi_min=phi0-size
 
-    print(phi_max*180/np.pi)
-    print(phi_min*180/np.pi)
 
     t=np.linspace(phi_min,phi_max,101)
     r=p/(1+e*np.cos(t))
+
     plt.plot(r*np.cos(t),r*np.sin(t),'k--')
     plt.axis('equal')
 
@@ -46,7 +59,7 @@ din2=33.73731665
 f2=67.80690232
 angle2=90
 P2=ThinLens(win2, din2, f2, Lambda1)
-Ellipsoid(P2, angle2)
+Mirror(P2, angle2)
 
 # %%
 
@@ -152,3 +165,4 @@ def center_projector(beta,alpha,e,a,c):
     return y0,np.sqrt(a2),np.sqrt(b2);
 
 size=5
+# %%
