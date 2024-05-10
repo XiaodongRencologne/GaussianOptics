@@ -222,3 +222,27 @@ def DrawBeamCountour(Mirror,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwarg
 
     return z, Countour_in, Countour_out
     
+def DrawBeamCountour2(Mirror,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwargs):
+    """
+    **kwargs includes:
+    """
+    z_c1 = Mirror['z_c_in']
+    z_c2 = Mirror['z_c_out']
+    win  = Mirror['win']
+    wout = Mirror['wout']
+    din  = Mirror['din']
+    dout = Mirror['dout']
+    zin =  np.linspace(0, np.abs(din),Nin)
+    zout = np.linspace(0,np.abs(dout),Nout)
+    
+    Countour = np.zeros((2,Nin+Nout))
+    Countour_in = win*np.sqrt(1+(zin/z_c1)**2)
+    Countour_out = wout*np.sqrt(1+(np.flip(zout)/z_c2)**2)
+    if dout>=0:
+         zout = zout+zin[-1]
+    else:
+         zout = -zout+zin[-1]
+
+    z = np.append(zin,zout)+offset
+    return z, Countour_in, Countour_out
+# %%
