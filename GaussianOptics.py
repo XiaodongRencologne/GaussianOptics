@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 #import matplotlib.pyplot as plt
-
+c = 299792458000  # mm/s
 def Gaussian_propagation2d(w0,z,Lambda):
     # confocal distance, in grasp it is denoted by 'b'
     z_c= np.pi*w0**2/Lambda
@@ -246,3 +246,8 @@ def DrawBeamCountour2(Mirror,Nin=301,Nout=301,size=2.5,color='b',offset=0,**kwar
     z = np.append(zin,zout)+offset
     return z, Countour_in, Countour_out
 # %%
+def Guassian_taper(Edge_T, T_angle,freq):
+    Lambda = c/freq/10**(9)
+    theta_0 = np.sqrt(-20 * T_angle**2 / (Edge_T *np.log(10)))
+    theta_0 = theta_0/180*np.pi
+    return Lambda/np.pi/theta_0
